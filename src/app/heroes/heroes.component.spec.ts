@@ -1,5 +1,9 @@
 import { of } from "rxjs";
 import { HeroesComponent } from "./heroes.component"
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HeroService } from "../hero.service";
+import { provideRouter } from "@angular/router";
+import { By } from "@angular/platform-browser";
 
 describe('HeroesComponent', () => {
     let component: HeroesComponent;
@@ -8,12 +12,12 @@ describe('HeroesComponent', () => {
 
     beforeEach(() => {
         HEROES = [
-            {id:1, name: 'SpiderDude', strength: 8},
-            {id:2, name: 'Wonderful Woman', strength: 24},
-            {id:3, name: 'SuperDude', strength: 55}
+            { id: 1, name: 'SpiderDude', strength: 8 },
+            { id: 2, name: 'Wonderful Woman', strength: 24 },
+            { id: 3, name: 'SuperDude', strength: 55 }
         ];
 
-        mockHeroService = jasmine.createSpyObj(['getHeroes','addHero', 'deleteHero']);
+        mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHero', 'deleteHero']);
 
         component = new HeroesComponent(mockHeroService);
     });
@@ -36,5 +40,45 @@ describe('HeroesComponent', () => {
 
             expect(mockHeroService.deleteHero).toHaveBeenCalledWith(HEROES[2]);
         });
+    });
+});
+
+describe('HeroesComponent (shallow tests)', () => {
+    let fixture: ComponentFixture<HeroesComponent>;
+    let mockHeroService;
+    let HEROES;  
+
+    beforeEach(() => {
+        HEROES = [
+            { id: 1, name: 'SpiderDude', strength: 8 },
+            { id: 2, name: 'Wonderful Woman', strength: 24 },
+            { id: 3, name: 'SuperDude', strength: 55 }
+        ];
+
+        mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHero', 'deleteHero']);
+        TestBed.configureTestingModule({
+            imports: [HeroesComponent],
+            providers: [
+                { provide: HeroService, useValue: mockHeroService },
+                provideRouter([])
+            ]
+        });
+
+        fixture = TestBed.createComponent(HeroesComponent);
+    });
+
+    //Component calls ngOnInit() which calls the getHeroes() method from an injected HeroService
+    it('should set heroes correctly from the service', () => {
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.heroes.length).toBe(3);
+    });
+
+    it('should create one li for each hero', () => {
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+
+        expect(fixture.debugElement.queryAll(By.css("li")).length).toBe(3);
     });
 });
