@@ -47,7 +47,7 @@ describe('HeroesComponent', () => {
 describe('HeroesComponent (shallow tests)', () => {
     let fixture: ComponentFixture<HeroesComponent>;
     let mockHeroService;
-    let HEROES;  
+    let HEROES;
 
     beforeEach(() => {
         HEROES = [
@@ -87,7 +87,7 @@ describe('HeroesComponent (shallow tests)', () => {
 describe('HeroesComponent (deep tests)', () => {
     let fixture: ComponentFixture<HeroesComponent>;
     let mockHeroService;
-    let HEROES; 
+    let HEROES;
 
     beforeEach(() => {
         HEROES = [
@@ -118,8 +118,53 @@ describe('HeroesComponent (deep tests)', () => {
         expect(heroComponents.length).toEqual(3);
 
         for (let i = 0; i < heroComponents.length; i++) {
-            expect((heroComponents[i].componentInstance as HeroComponent).hero).toEqual(HEROES[i]);           
+            expect((heroComponents[i].componentInstance as HeroComponent).hero).toEqual(HEROES[i]);
         }
+
+    });
+
+    it(`should call heroService.deleteHero when the Hero Component's 
+        delete button is clicked`, () => {
+        spyOn(fixture.componentInstance, 'delete');
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+
+        fixture.detectChanges();
+
+        // Our three hero components
+        const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+
+        // Triggering a click event on a button
+        // heroComponents[0].query(By.css('button'))
+        //     .triggerEventHandler('click', { stopPropagation: () => { } });
+
+        // Emitting the delete event
+        //(heroComponents[0].componentInstance as HeroComponent).delete.emit(undefined);
         
+        // Raising the delete event
+        heroComponents[0].triggerEventHandler('delete', undefined);
+
+        expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[0]);
+    });
+
+    // Test input box
+    it('should add a new hero to the hero list when the add button is clicked', () => {
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+
+        fixture.detectChanges();
+        const name = "Mr. Ice";
+
+        //addHero must return an Observable (we subscribe on it)
+        mockHeroService.addHero.and.returnValue(of({id: 4, name: name, strength: 4}));
+        const inputElement = fixture.debugElement.query(By.css('input')).nativeElement as HTMLInputElement;
+        const addButton = fixture.debugElement.queryAll(By.css('button'))[0];
+
+        inputElement.value = name; // Simulates typing the name in the input
+        addButton.triggerEventHandler('click', null);
+
+        fixture.detectChanges();
+
+        const heroText = (fixture.debugElement.query(By.css('ul')).nativeElement as HTMLUListElement).textContent;
+        expect(heroText).toContain(name);
+
     });
 });
