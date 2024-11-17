@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
-import { NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -15,10 +15,9 @@ import { RouterLink } from '@angular/router';
     styleUrls: ['./hero-search.component.css'],
     standalone: true,
     imports: [
-        NgFor,
-        RouterLink,
-        AsyncPipe,
-    ],
+    RouterLink,
+    AsyncPipe
+],
 })
 export class HeroSearchComponent implements OnInit {
   heroes$: Observable<Hero[]>;
