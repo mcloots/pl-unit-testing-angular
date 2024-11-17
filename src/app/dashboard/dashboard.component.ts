@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Hero } from '../hero';
 import { HeroService } from '../hero.service';
-import { NgFor } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { HeroSearchComponent } from '../hero-search/hero-search.component';
 import { StrengthPipe } from '../strength/strength.pipe';
@@ -11,7 +11,7 @@ import { StrengthPipe } from '../strength/strength.pipe';
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css'],
     standalone: true,
-    imports: [NgFor, RouterLink, HeroSearchComponent, StrengthPipe]
+    imports: [RouterLink, HeroSearchComponent, StrengthPipe]
 })
 export class DashboardComponent implements OnInit {
   heroes: Hero[] = [];
