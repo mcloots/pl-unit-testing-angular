@@ -11,7 +11,9 @@
 </div>
 
 <ul class="heroes">
-  <li *ngFor="let hero of heroes">
-    <app-hero [hero]="hero" (delete)="delete(hero)"></app-hero>
-  </li>
+  @for (hero of heroes; track hero) {
+    <li>
+      <app-hero [hero]="hero" (delete)="delete(hero)"></app-hero>
+    </li>
+  }
 </ul>
